@@ -1,0 +1,7 @@
+Flask
+Werkzeug
+gunicorn
+openai
+langchain
+python-dotenv
+Jinja2
