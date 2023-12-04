@@ -23,9 +23,10 @@ def api_options_in_funnel_focus():
     data = request.get_json()
     funnel = data.get('funnel')
     user_question = variables["user_question"]
+    print("variablesss---------",variables,user_question)
     variables["funnel_focus"] = funnel
     if funnel:
-        output = ContentLab.options_in_funnel_focus(funnel, user_question)
+        output = contentlab.options_in_funnel_focus(funnel, user_question)
         return jsonify({'message': 'Function executed successfully', "output": output})
     else:
         return jsonify({'error': 'Invalid data provided'}), 400
@@ -41,6 +42,8 @@ def api_generate_KPI():
         return jsonify({'message': 'Function executed successfully', "output": output})
     else:
         return jsonify({'error': 'Invalid data provided'}), 400
+
+
 @app.route('/generate_activity_theme', methods=['POST'])
 def api_generate_activity_theme():
     data = request.get_json()

@@ -7,6 +7,7 @@ from langchain.prompts import PromptTemplate
 from langchain.llms import AzureOpenAI
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
+from langchain.chat_models import AzureChatOpenAI
 
 
 import warnings
@@ -18,16 +19,27 @@ warnings.filterwarnings('ignore')
 # MODEL_NAME = "text-davinci-003"
 #
 os.environ["OPENAI_API_TYPE"] = "azure"
-os.environ["OPENAI_API_VERSION"] = "2023-05-15"
-os.environ["AZURE_OPENAI_ENDPOINT"] = "https://cmo-dev-des-ai.openai.azure.com/"
-os.environ["OPENAI_API_KEY"] = "c9c15fe92ffc49d68f1194e1b84320ef"
-os.environ["DEPLOYMENT_NAME"] = "content"
-os.environ["MODEL_NAME"] = "gpt-4-turbo"
+os.environ["OPENAI_API_VERSION"] = "2023-03-15-preview"
+os.environ["AZURE_OPENAI_ENDPOINT"] = "https://cmo-dev-ai.openai.azure.com/"
+os.environ["OPENAI_API_KEY"] = "099c9c6cf8c945469d6d15d2312fa6de"
+# os.environ["DEPLOYMENT_NAME"] = "content_lab"
+# os.environ["MODEL_NAME"] = "gpt-4"
+
+openai.api_type = "azure"
+# openai.api_version = "2023-09-01-preview"
+# openai.api_version = "2023-05-15"
+# openai.api_endpoint = "https://cmo-dev-ai.openai.azure.com/"
+# openai.api_key = "099c9c6cf8c945469d6d15d2312fa6de"
+# openai.deployment_name = "contentlab2"
+# openai.model_name = "gpt-35-turbo"
+
 
 class ContentLab():
     def __init__(self):
 
-        self.llm = AzureOpenAI(temperature=0.0)
+        self.llm = AzureChatOpenAI(temperature=0.0,
+                               openai_api_key="099c9c6cf8c945469d6d15d2312fa6de",
+                               deployment_name="content_lab", model_name="gpt-4")
         self.memory = ConversationBufferMemory()
         self.conversation = ConversationChain(
             llm=self.llm,
@@ -55,7 +67,7 @@ class ContentLab():
         return response
 
 
-    def options_in_funnel_focus(self,funnel, user_question):
+    def options_in_funnel_focus(self,funnel,user_question):
 
         # user_quest = str(json.load(inp)["user_quest"])
         # mar_stages = json.load(inp)["stages"]
@@ -100,7 +112,8 @@ class ContentLab():
          as an improvement within the strategy and focus. Given that my company is {company}. Give me a \
          list of key product activity themes I can work on to achieve my goal and kpi improvement within my company.\n \
          Activity theme is like a generic theme of solutions or like a category of solutions I can work on \
-         to acheive my goal within the choices I made to this point.")
+         to acheive my goal within the choices I made to this point. Do not provide any explanation for the activity themes.\
+          Only provide the list of activity themes in the format suggested earlier and try to incorporate company name into the activity themes if necessary")
         edited_prompt = prompt_template.format(Kpi_list=kpis, Kpi_vals=kpi_vals, company = comp)
         print("prompt ........", edited_prompt)
 
@@ -109,17 +122,17 @@ class ContentLab():
 
         return response
 
-    def priscript_analy_recommendations(self, kpis, kpi_vals, theme, specs):
+    def priscript_analy_recommendations(self, kpis, kpi_vals, theme):
         prompt_template = PromptTemplate.from_template("As explained earlier, I have this kpi list {Kpi_list} \
          and corresponding kpi improvement values as such {Kpi_vals}. I want to select {activity_theme} \
          from earlier activity themes list. Give me a list of specific Ideas I can implement within my company \
-         considering the theme, kpis and my goal and some additional specifications: {specifications}. \n \
+         considering the theme, kpis and my goal. \n \
          Give me a list of prescriptive analyis and recommendations that I can work on to achieve my goal.\n \
          The output format is a dictionary with keys prescriptive analysis, recommendations and Ideas \
          and the values are key bullet points for prescriptive analysis, one line recommendations and a \
          list of Ideas or Idea names.\n \
-         Donot provide any explanations, and the ideas can be catchy names inline with my company.")
-        edited_prompt = prompt_template.format(Kpi_list=kpis, Kpi_vals=kpi_vals, activity_theme=theme, specifications= specs)
+         Donot provide any explanations, and the ideas can be catchy names inline with the company, activity theme and my goal..")
+        edited_prompt = prompt_template.format(Kpi_list=kpis, Kpi_vals=kpi_vals, activity_theme=theme)
         print("prompt ........", edited_prompt)
 
         response = self.conversation.predict(input=edited_prompt)
