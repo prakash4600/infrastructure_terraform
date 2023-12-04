@@ -6,7 +6,11 @@ app = Flask(__name__)
 contentlab = ContentLab()
 
 variables = {}
-
+# for testing
+@app.route('/')
+def home():
+    return 'Welcome to Content Lab, Brainstorm your marketing ideas here'
+    
 @app.route('/what_to_accomplish', methods=['POST'])
 def api_what_to_accomplish():
     data = request.get_json()
