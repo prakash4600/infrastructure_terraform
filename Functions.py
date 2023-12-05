@@ -53,36 +53,36 @@ class ContentLab():
         # mar_stages = json.load(inp)["stages"]
         mar_stages = ["Awareness", "Acquisition", "Activation", "Revenue", "Retention", "Referral"]
 
-        prompt_template = PromptTemplate.from_template("Assume a role of marketer but do not acknowledge it in the response.\n \
-            Give me a brief explanation to achieve my goal: {user_question}.\n \
-            Given the list of {marketing_stages} please provide a stage I should be focusing on based on my goal.\n \
-            The output format is a dictionary with one key as text and the value as the explanation and the \
-            other key is funnel focus and the value is your recommended funnel focus.")
+        prompt_template = PromptTemplate.from_template("Given the list of {marketing_stages} \
+         please provide a stage I should be focusing on based on my goal: {user_question}. \
+         Also give me a brief explanation to achieve the goal w.r.t the focus stage. \n \
+         The output format is a dictionary with one key as response and the value as the explanation \
+          and the other key is funnel_focus and the value is your recommended funnel focus.")
         edited_prompt = prompt_template.format(user_question=inp, marketing_stages=mar_stages)
-        print("prompt ........", edited_prompt)
+        # print("prompt ........", edited_prompt)
 
         response = self.conversation.predict(input=edited_prompt)
-        print("response ........", response)
+        # print("response ........", response)
 
         return response
 
 
-    def options_in_funnel_focus(self,funnel,user_question):
+    def options_in_funnel_focus(self,funnel):
 
         # user_quest = str(json.load(inp)["user_quest"])
         # mar_stages = json.load(inp)["stages"]
 
-        prompt_template = PromptTemplate.from_template("My focus now is {funnel_focus} stage in marketing.\n \
-             Give me a list of strategies or options that I can consider to achieve {user_quest} \
-             in my current focused stage?\n Give me just the option names. Do not provide any explanation or \
-             introductions for the list of options.\n The output format is dictionary with key as options and\
-              the value is a python list of the options")
+        prompt_template = PromptTemplate.from_template("I would like to focus on {funnel_focus} stage \
+        as my funnel focus in marketing.\n Give me a list of strategies or options that I can consider \
+        to achieve the goal mentioned earlier in my current focused stage? Give me just the option names.\
+        Do not provide any explanation or introductions for the list of options.\n \
+        The output format is dictionary with key as options and the value is a python list of the options")
 
-        edited_prompt = prompt_template.format(funnel_focus=funnel, user_quest=user_question)
-        print("prompt ........", edited_prompt)
+        edited_prompt = prompt_template.format(funnel_focus=funnel)
+        # print("prompt ........", edited_prompt)
 
         response = self.conversation.predict(input=edited_prompt)
-        print("response ........", response)
+        # print("response ........", response)
 
         return response
 
@@ -93,27 +93,29 @@ class ContentLab():
         # user_quest = str(json.load(inp)["user_quest"])
         # mar_stages = json.load(inp)["stages"]
 
-        prompt_template = PromptTemplate.from_template("I am planning for a {strategy} marketing strategy to \
-            focus on {funnel_focus}.\n Generate a top 5 KPIs I should be analyzing for my {strategy} marketing \
-            strategy\n Give me just the list KPI names. Do not provide any explanation or introductions for the list of KPIs.\n \
-            The output format is dictionary with key as kpis and the value is a python list of the KPIs")
+        prompt_template = PromptTemplate.from_template("I am planning for a {strategy} strategy focusing \
+         on {funnel_focus}.\n Generate top 5 KPIs I should be analyzing for my {strategy} strategy.\n \
+         Give me just the list KPI names. Do not provide any explanation or introductions for the list \
+         of KPIs.\n The output format is dictionary with key as kpis and the value is a python list \
+         of the KPIs")
         edited_prompt = prompt_template.format(funnel_focus=funnel, strategy= strategy)
-        print("prompt ........", edited_prompt)
+        # print("prompt ........", edited_prompt)
 
         response = self.conversation.predict(input=edited_prompt)
-        print("response ........", response)
+        # print("response ........", response)
 
         return response
 
     def generate_activity_theme(self,kpis, kpi_vals, comp):
-        prompt_template = PromptTemplate.from_template("Based on the strategy I choose earlier, \
-        goal I have choosen and the funnel focus. \n \
+        prompt_template = PromptTemplate.from_template("Based on the strategy, goal and funnel focus \
+        I chose earlier. \n \
         Here are the lists of {Kpi_list} and {Kpi_vals} . I want to achieve corresponding kpi values\
-         as an improvement within the strategy and focus. Given that my company is {company}. Give me a \
-         list of key product activity themes I can work on to achieve my goal and kpi improvement within my company.\n \
-         Activity theme is like a generic theme of solutions or like a category of solutions I can work on \
-         to acheive my goal within the choices I made to this point. Do not provide any explanation for the activity themes.\
-          Only provide the list of activity themes in the format suggested earlier and try to incorporate company name into the activity themes if necessary")
+        as an improvement. Improvement could be percent reduction or increase based on the KPI. \
+        Given that my company is {company}. Give me a list of key product activity themes I can work on \
+        according to the choices I made to this point to achieve my goal, kpi improvement within my company.\n \
+        Activity theme is like a theme or category of marketing solutions any marketer can apply for a company \
+        (Examples : Educational series, Referal programs, Email campaigns etc)\
+        Only provide the list of activity themes in the format suggested earlier without any explanations.")
         edited_prompt = prompt_template.format(Kpi_list=kpis, Kpi_vals=kpi_vals, company = comp)
         print("prompt ........", edited_prompt)
 
@@ -124,33 +126,34 @@ class ContentLab():
 
     def priscript_analy_recommendations(self, kpis, kpi_vals, theme):
         prompt_template = PromptTemplate.from_template("As explained earlier, I have this kpi list {Kpi_list} \
-         and corresponding kpi improvement values as such {Kpi_vals}. I want to select {activity_theme} \
-         from earlier activity themes list. Give me a list of specific Ideas I can implement within my company \
-         considering the theme, kpis and my goal. \n \
-         Give me a list of prescriptive analyis and recommendations that I can work on to achieve my goal.\n \
+         and corresponding kpi improvement values {Kpi_vals}.\n\
+         I want to select {activity_theme} from the suggested activity themes list.\n\
+         Give me a list of specific Ideas I can implement within my company considering the theme, kpis and my goal.\n \
+         Give me a list of prescriptive analysis and recommendations that I can work on to achieve my goal.\n \
          The output format is a dictionary with keys prescriptive analysis, recommendations and Ideas \
          and the values are key bullet points for prescriptive analysis, one line recommendations and a \
          list of Ideas or Idea names.\n \
-         Donot provide any explanations, and the ideas can be catchy names inline with the company, activity theme and my goal..")
+         Do not provide any explanations, and the ideas can be catchy names inline with the company, activity theme and my goal.")
         edited_prompt = prompt_template.format(Kpi_list=kpis, Kpi_vals=kpi_vals, activity_theme=theme)
-        print("prompt ........", edited_prompt)
+        # print("prompt ........", edited_prompt)
 
         response = self.conversation.predict(input=edited_prompt)
-        print("response ........", response)
+        # print("response ........", response)
 
         return response
 
     def idea_detail_view(self,user_feedback, ai_recom):
         prompt_template = PromptTemplate.from_template("Based on my goal, strategy, kpis, activity theme, \
         {usr_feed}, {ai_rec} and the list of Ideas given I want to go with the best idea among them.\n \
-        Give me the Target audience, a campaign Brief (list down my goal, strategy and all the choices \
+        Give me the best idea among the list, target audience I can focus on with the Idea,\
+        a campaign Brief (list down my goal, strategy and all the choices \
         I made in this process), production plan and Business case for the Idea.\n \
         Give the output in previously defined output format.")
         edited_prompt = prompt_template.format(usr_feed=user_feedback, ai_rec=ai_recom)
-        print("prompt ........", edited_prompt)
+        # print("prompt ........", edited_prompt)
 
         response = self.conversation.predict(input=edited_prompt)
-        print("response ........", response)
+        # print("response ........", response)
 
         return response
 
@@ -162,7 +165,7 @@ def main():
     ContentLab.generate_activity_theme(["Website traffic", "Social media engagement", "Influencer reach"], ["50%", "50%", "50%"], "paypal")
     ContentLab.priscript_analy_recommendations(["Website traffic", "Social media engagement", "Influencer reach"],
                                        ["50%", "50%", "50%"], "Buy first Pay Later","Improve website traffic and Influencer reach")
-    ContentLab.idea_detail_view("PayPal PayLater Boost")
+    # ContentLab.idea_detail_view("PayPal PayLater Boost")
 
 if __name__ == '__main__':
     print('ContentLab')

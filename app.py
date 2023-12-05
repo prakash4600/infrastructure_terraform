@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
 from Functions import *
+from flask_cors import CORS
+import json
 
 app = Flask(__name__)
-
+CORS(app)
 contentlab = ContentLab()
 
 variables = {}
@@ -14,7 +16,9 @@ def api_what_to_accomplish():
     variables['user_question']= user_question
     if user_question:
         output = contentlab.what_to_accomplish(user_question)
-        return jsonify({'message': 'Function executed successfully', "output": output})
+        out_res = json.loads(output)
+        out_res["prompt"]=user_question
+        return jsonify(out_res)
     else:
         return jsonify({'error': 'Invalid data provided'}), 400
 
@@ -26,8 +30,9 @@ def api_options_in_funnel_focus():
     print("variablesss---------",variables,user_question)
     variables["funnel_focus"] = funnel
     if funnel:
-        output = contentlab.options_in_funnel_focus(funnel, user_question)
-        return jsonify({'message': 'Function executed successfully', "output": output})
+        output = contentlab.options_in_funnel_focus(funnel)
+        out_res = json.loads(output)
+        return jsonify(out_res)
     else:
         return jsonify({'error': 'Invalid data provided'}), 400
 
@@ -39,7 +44,8 @@ def api_generate_KPI():
     user_question = variables["user_question"]
     if option:
         output = contentlab.generate_KPI(funnel, option, user_question)
-        return jsonify({'message': 'Function executed successfully', "output": output})
+        out_res = json.loads(output)
+        return jsonify(out_res)
     else:
         return jsonify({'error': 'Invalid data provided'}), 400
 
@@ -54,7 +60,8 @@ def api_generate_activity_theme():
     # company = data.get('paypal')  # hardcode company='paypal'
     if KPI and values:
         output = contentlab.generate_activity_theme(KPI,values,"paypal")
-        return jsonify({'message': 'Function executed successfully', "output": output})
+        out_res = json.loads(output)
+        return jsonify(out_res)
     else:
         return jsonify({'error': 'Invalid data provided'}), 400
 @app.route('/prescrt_analy_recommendations', methods=['POST'])
@@ -66,7 +73,8 @@ def api_prescrt_analy_recommendations():
     values = variables["kpi_vals"]
     if activity_theme:
         output = contentlab.priscript_analy_recommendations(KPI,values,activity_theme)
-        return jsonify({'message': 'Function executed successfully', "output": output})
+        out_res = json.loads(output)
+        return jsonify(out_res)
     else:
         return jsonify({'error': 'Invalid data provided'}), 400
 
@@ -78,7 +86,8 @@ def api_idea_detail_view():
 
     if user_feedback and ai_recom:
         output = contentlab.idea_detail_view(user_feedback, ai_recom )
-        return jsonify({'message': 'Function executed successfully', "output": output})
+        out_res = json.loads(output)
+        return jsonify(out_res)
     else:
         return jsonify({'error': 'Invalid data provided'}), 400
 
