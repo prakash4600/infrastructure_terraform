@@ -16,6 +16,9 @@ def api_what_to_accomplish():
     variables['user_question']= user_question
     if user_question:
         output = contentlab.what_to_accomplish(user_question)
+        # x = output.split("{")[1].split("}")[0]
+        output = output.replace("python","").replace("json","").replace("'''","")
+        print(output)
         out_res = json.loads(output)
         out_res["prompt"]=user_question
         return jsonify(out_res)
@@ -31,6 +34,11 @@ def api_options_in_funnel_focus():
     variables["funnel_focus"] = funnel
     if funnel:
         output = contentlab.options_in_funnel_focus(funnel)
+        # x=output.split("{")[1].split("}")[0]
+        output = str(output.replace("python", "").replace("json", "").replace('\n', ''))
+        if output[0] != "{":
+            output = output[3:-3]
+        print(output)
         out_res = json.loads(output)
         return jsonify(out_res)
     else:
@@ -44,6 +52,11 @@ def api_generate_KPI():
     user_question = variables["user_question"]
     if option:
         output = contentlab.generate_KPI(funnel, option, user_question)
+        # x = output.split("{")[1].split("}")[0]
+        output = output.replace("python", "").replace("json", "").replace("\n", "")
+        if output[0] != "{":
+            output = output[3:-3]
+        print(output)
         out_res = json.loads(output)
         return jsonify(out_res)
     else:
@@ -60,6 +73,11 @@ def api_generate_activity_theme():
     # company = data.get('paypal')  # hardcode company='paypal'
     if KPI and values:
         output = contentlab.generate_activity_theme(KPI,values,"paypal")
+        # x = output.split("{")[1].split("}")[0]
+        output = output.replace("python", "").replace("json", "").replace("\n", "")
+        if output[0] != "{":
+            output = output[3:-3]
+        print(output)
         out_res = json.loads(output)
         return jsonify(out_res)
     else:
@@ -73,6 +91,11 @@ def api_prescrt_analy_recommendations():
     values = variables["kpi_vals"]
     if activity_theme:
         output = contentlab.priscript_analy_recommendations(KPI,values,activity_theme)
+        # x = output.split("{")[1].split("}")[0]
+        output = output.replace("python", "").replace("json", "").replace("\n", "")
+        if output[0] != "{":
+            output = output[3:-3]
+        print(output)
         out_res = json.loads(output)
         return jsonify(out_res)
     else:
@@ -85,7 +108,12 @@ def api_idea_detail_view():
     ai_recom = data.get("ai_recommendation")
 
     if user_feedback and ai_recom:
-        output = contentlab.idea_detail_view(user_feedback, ai_recom )
+        output = contentlab.idea_detail_view(user_feedback, ai_recom)
+        # x = output.split("{")[1].split("}")[0]
+        output = output.replace("python", "").replace("json", "").replace("\n", "")
+        if output[0] != "{":
+            output = output[3:-3]
+        print(output)
         out_res = json.loads(output)
         return jsonify(out_res)
     else:
