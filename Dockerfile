@@ -11,7 +11,7 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install any needed packages specified in requirements.txt and update the errors
-#RUN pip install --upgrade Flask Werkzeug
+RUN pip install --upgrade Flask Werkzeug
 
 # Expose port 5000 to the outside world
 EXPOSE 5000
