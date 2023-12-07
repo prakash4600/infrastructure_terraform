@@ -41,7 +41,6 @@ stages:
     - script: |
         python -m venv antenv
         source antenv/bin/activate
-        pip uninstall pip==23.0.1
         pip install pip
         pip install --upgrade pip
         pip install setup
