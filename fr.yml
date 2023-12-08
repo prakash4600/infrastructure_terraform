@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-api-deployment
+spec:
+  replicas: 3  # Adjust the number of replicas as needed
+  selector:
+    matchLabels:
+      app: flask-api
+  template:
+    metadata:
+      labels:
+        app: flask-api
+    spec:
+      containers:
+      - name: flask-api-container
+        image: containergen.azurecr.io/genai:latest  # Replace with your Docker image and tag
+        ports:
+        - containerPort: 8000  # Assuming your Flask app runs on port 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-api-service
+spec:
+  selector:
+    app: flask-api
+  ports:
+    - protocol: TCP
+      port: 80  # External port exposed by the service
+      targetPort: 8000  # Port on the container where Flask API is running
+  type: LoadBalancer
